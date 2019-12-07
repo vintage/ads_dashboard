@@ -1,0 +1,9 @@
+.body-wrapper {
+  padding-top: 20px;
+}
+
+#stats-chart {
+  width: 100%;
+  height: 400px;
+  max-width: 100%;
+}

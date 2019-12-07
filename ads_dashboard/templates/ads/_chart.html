@@ -1,0 +1,84 @@
+<script>
+  // Heavly inspired by 
+  // https://www.amcharts.com/demos/multiple-value-axes/
+  am4core.ready(function () {
+    am4core.useTheme(am4themes_animated);
+
+    var chart = am4core.create("stats-chart", am4charts.XYChart);
+    chart.colors.step = 2;
+    // Ugly data transformation to simplify the project and not exposing any REST alike endpoint
+    chart.data = [
+        {% for item in data %}
+        {
+            date: new Date(
+                {{ item.date.year }},
+                {{ item.date.month }},
+                {{ item.date.day }}
+            ),
+            clicks: {{ item.clicks }},
+            impressions: {{ item.impressions }},
+        },
+        {% endfor %}
+    ];
+
+    var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.minGridDistance = 50;
+
+    // Create series
+    function createAxisAndSeries(field, name, opposite, bullet) {
+      var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+      var series = chart.series.push(new am4charts.LineSeries());
+      series.dataFields.valueY = field;
+      series.dataFields.dateX = "date";
+      series.strokeWidth = 2;
+      series.yAxis = valueAxis;
+      series.name = name;
+      series.tooltipText = "{name}: [bold]{valueY}[/]";
+      series.tensionX = 0.8;
+
+      var interfaceColors = new am4core.InterfaceColorSet();
+
+      switch(bullet) {
+        case "triangle":
+          var bullet = series.bullets.push(new am4charts.Bullet());
+          bullet.width = 12;
+          bullet.height = 12;
+          bullet.horizontalCenter = "middle";
+          bullet.verticalCenter = "middle";
+
+          var triangle = bullet.createChild(am4core.Triangle);
+          triangle.stroke = interfaceColors.getFor("background");
+          triangle.strokeWidth = 2;
+          triangle.direction = "top";
+          triangle.width = 12;
+          triangle.height = 12;
+          break;
+        default:
+          var bullet = series.bullets.push(new am4charts.CircleBullet());
+          bullet.circle.stroke = interfaceColors.getFor("background");
+          bullet.circle.strokeWidth = 2;
+          break;
+      }
+
+      valueAxis.renderer.line.strokeOpacity = 1;
+      valueAxis.renderer.line.strokeWidth = 2;
+      valueAxis.renderer.line.stroke = series.stroke;
+      valueAxis.renderer.labels.template.fill = series.stroke;
+      valueAxis.renderer.opposite = opposite;
+      valueAxis.renderer.grid.template.disabled = true;
+    }
+
+    createAxisAndSeries("clicks", "Clicks", false, "circle");
+    createAxisAndSeries("impressions", "Impressions", true, "triangle");
+
+    // Add legend
+    chart.legend = new am4charts.Legend();
+
+    // Add cursor
+    chart.cursor = new am4charts.XYCursor();
+
+  }); // end am4core.ready()
+</script>
+
+<div id="stats-chart"></div>

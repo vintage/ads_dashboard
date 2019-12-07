@@ -1,7 +1,15 @@
+import collections
 import datetime
 import typing
 
 from ads import models
+
+
+class AggregatedCampaignStats:
+    def __init__(self, date, clicks, impressions):
+        self.date = date
+        self.clicks = clicks
+        self.impressions = impressions
 
 
 def get_data_sources():
@@ -24,6 +32,22 @@ def get_campaign_stats(
         stats = stats.filter(campaign__in=campaigns)
 
     return stats
+
+
+def aggregate_campaign_stats_by_date(
+    campaign_stats: typing.List[models.CampaignStats],
+) -> typing.List[AggregatedCampaignStats]:
+    result = collections.defaultdict(lambda: {"clicks": 0, "impressions": 0,})
+    for stats in campaign_stats:
+        result[stats.date]["clicks"] += stats.clicks
+        result[stats.date]["impressions"] += stats.impressions
+
+    aggregated = [
+        AggregatedCampaignStats(k, result[k]["clicks"], result[k]["impressions"])
+        for k in result.keys()
+    ]
+
+    return sorted(aggregated, key=lambda i: i.date)
 
 
 def get_or_create_data_source(name: str) -> typing.Optional[models.DataSource]:
