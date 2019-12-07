@@ -33,9 +33,7 @@ class CampaignStats(models.Model):
     class Meta:
         verbose_name = "campaign stats"
         verbose_name_plural = "campaign stats"
-        unique_together = (
-            ("date", "data_source", "campaign",),
-        )
+        unique_together = (("date", "data_source", "campaign",),)
 
     def __str__(self):
         return f"Stats #{self.pk}"

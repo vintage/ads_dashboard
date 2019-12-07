@@ -7,7 +7,7 @@ from ads import services, models
 
 class CampaignStatsParserItem:
     def __init__(self, data: typing.List[str]):
-        self.date = datetime.datetime.strptime(data[0], '%d.%m.%Y')
+        self.date = datetime.datetime.strptime(data[0], "%d.%m.%Y")
         self.data_source = data[1]
         self.campaign = data[2]
         self.clicks = int(data[3])
@@ -39,11 +39,15 @@ def save_items(items: typing.Iterable[CampaignStatsParserItem]) -> int:
     for item in items:
         data_source_name = item.data_source
         if data_source_name not in data_sources.keys():
-            data_sources[data_source_name] = services.get_or_create_data_source(name=data_source_name)
+            data_sources[data_source_name] = services.get_or_create_data_source(
+                name=data_source_name
+            )
 
         campaign_name = item.campaign
         if campaign_name not in campaigns.keys():
-            campaigns[campaign_name] = services.get_or_create_campaign(name=campaign_name)
+            campaigns[campaign_name] = services.get_or_create_campaign(
+                name=campaign_name
+            )
 
         stats_objects.append(
             models.CampaignStats(
@@ -56,4 +60,3 @@ def save_items(items: typing.Iterable[CampaignStatsParserItem]) -> int:
         )
 
     return services.create_bulk_campaign_stats(stats_objects)
-

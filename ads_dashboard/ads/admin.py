@@ -15,5 +15,14 @@ class DataSourceAdmin(admin.ModelAdmin):
 
 @admin.register(models.CampaignStats)
 class CampaignStatsAdmin(admin.ModelAdmin):
-    list_display = ("date", "campaign", "data_source", "clicks", "impressions",)
-    list_select_related = ("campaign", "data_source",)
+    list_display = (
+        "date",
+        "campaign",
+        "data_source",
+        "clicks",
+        "impressions",
+    )
+    list_select_related = (
+        "campaign",
+        "data_source",
+    )

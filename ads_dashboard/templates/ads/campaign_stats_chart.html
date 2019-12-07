@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="ui segment">
+    <form method="post" class="ui form" novalidate>
+        {% csrf_token %}
+        <div class="two fields">
+            <div class="field">
+                {{ form.data_sources.label }}
+                {{ form.data_sources }}
+            </div>
+
+            <div class="field">
+                {{ form.campaigns.label }}
+                {{ form.campaigns }}
+            </div>
+        </div>
+
+        <button class="ui primary right floated labeled icon button" type="submit">
+            <i class="search icon"></i>
+            Submit
+        </button>
+
+        <div style="clear: both"></div>
+    </form>
+</div>
+
+<table class="ui celled striped table">
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Data source</th>
+        <th>Campaign</th>
+        <th>Date</th>
+        <th>Clicks</th>
+        <th>Impressions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in objects|slice:"100" %}
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ object.data_source }}</td>
+        <td>{{ object.campaign }}</td>
+        <td>{{ object.date }}</td>
+        <td>{{ object.clicks }}</td>
+        <td>{{ object.impressions }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
